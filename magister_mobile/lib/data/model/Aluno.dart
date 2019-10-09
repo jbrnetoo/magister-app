@@ -5,9 +5,7 @@ import 'package:magister_mobile/data/model/Curso.dart';
 import 'package:flutter/material.dart';
 import 'package:magister_mobile/data/views/AlunoPage.dart';
 
-
-class Aluno{
-
+class Aluno {
   Aluno();
 
   int idAluno;
@@ -19,25 +17,25 @@ class Aluno{
   Curso curso;
   String img;
 
-  Aluno.fromMap(Map map){
+  Aluno.fromMap(Map map) {
     idAluno = map[HelperAluno.idColumn];
     nomeAluno = map[HelperAluno.nomeColumn];
-    // totCreditos = map[HelperAluno.totalCreditoColumn];
     datNasc = map[HelperAluno.dtNascColumn];
-    mgp = map[HelperAluno.idCursoColumn];
+    mgp = map[HelperAluno.mgpColumn];
+    // totCreditos = map[HelperAluno.totalCreditoColumn];
     //idCurso = map[HelperAluno.idCursoColumn];
   }
 
   Map toMap() {
     Map<String, dynamic> map = {
       HelperAluno.nomeColumn: nomeAluno,
-     // HelperAluno.totalCreditoColumn: totCreditos,
+      // HelperAluno.totalCreditoColumn: totCreditos,
       HelperAluno.dtNascColumn: datNasc,
       HelperAluno.mgpColumn: mgp,
-     // HelperAluno.idCursoColumn: idCurso,
+      // HelperAluno.idCursoColumn: idCurso,
     };
 
-    if(idAluno != null){
+    if (idAluno != null) {
       map[HelperAluno.idColumn] = idAluno;
     }
     return map;
@@ -47,8 +45,7 @@ class Aluno{
   String toString() {
     return "Contact(id: $idAluno, nome: $nomeAluno, créditos: $totCreditos, dataNasc: $datNasc, mgp: $mgp, idCurso: $idCurso)";
   }
-  
-  }
+}
 
 TextEditingController matriculaAlunoController = TextEditingController();
 TextEditingController nomeAlunoController = TextEditingController();
@@ -56,40 +53,40 @@ TextEditingController dataNascimentoController = TextEditingController();
 TextEditingController mgpAlunoController = TextEditingController();
 
 class Alunos extends StatefulWidget {
-
   Color color;
   Alunos({@required this.color});
 
   @override
-  _AlunosState createState() => _AlunosState();
+  _AlunosState createState() => _AlunosState(color: color);
 }
 
 class _AlunosState extends State<Alunos> {
-
   HelperAluno helper = HelperAluno();
   List<Aluno> alunos = List();
+  Color color;
+  _AlunosState({@required this.color});
 
-@override
+  @override
   void initState() {
-    Aluno a = new Aluno();
-    a.idAluno = 2030;
-    a.nomeAluno = "Leo";
-    a.datNasc = "1996-12-19";
-    a.mgp = 20.5;
-    helper.save(a);
     super.initState();
+    // Aluno a = new Aluno();
+    // a.idAluno = 2030;
+    // a.nomeAluno = "Leo";
+    // a.datNasc = "1996-12-19";
+    // a.mgp = 20.5;
+    // helper.save(a);
     _getAllAluno();
   }
 
   @override
   Widget build(BuildContext context) {
-      return Scaffold(
+    return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           _showAlunoPage();
         },
         child: Icon(Icons.add),
-        backgroundColor: Colors.cyan,
+        backgroundColor: color,
       ),
       body: ListView.builder(
           padding: EdgeInsets.all(10.0),
@@ -100,7 +97,7 @@ class _AlunosState extends State<Alunos> {
     );
   }
 
-   Widget _alunoCard(BuildContext context, int index) {
+  Widget _alunoCard(BuildContext context, int index) {
     return GestureDetector(
       child: Card(
         child: Padding(
@@ -125,14 +122,15 @@ class _AlunosState extends State<Alunos> {
                   children: <Widget>[
                     Text(
                       alunos[index].nomeAluno ?? "",
-                      style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          fontSize: 22.0, fontWeight: FontWeight.bold),
                     ),
                     Text(
                       "ID: " + alunos[index].idAluno.toString() ?? "",
-                      style: TextStyle( fontSize: 18.0),
+                      style: TextStyle(fontSize: 18.0),
                     ),
                     Text(
-                     "MPG: " + alunos[index].mgp.toString() ?? "",
+                      "MPG: " + alunos[index].mgp.toString() ?? "",
                       style: TextStyle(fontSize: 18.0),
                     )
                   ],
@@ -149,24 +147,27 @@ class _AlunosState extends State<Alunos> {
   }
 
   void _showAlunoPage({Aluno aluno}) async {
-    final recAluno= await Navigator.push(context,
-      MaterialPageRoute(builder: (context) => AlunoPage(aluno: aluno,))
-      );
-      if(recAluno != null){
-        if(aluno != null){
-          await helper.update(recAluno);
-        } else {
-          await helper.save(recAluno);
-        }
-        _getAllAluno();
+    final recAluno = await Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => AlunoPage(
+                  aluno: aluno, color: color
+                )));
+    if (recAluno != null) {
+      if (aluno != null) {
+        await helper.update(recAluno);
+      } else {
+        await helper.save(recAluno);
       }
+      _getAllAluno();
+    }
   }
 
-  void _getAllAluno(){
-      helper.getAll().then((list) {
-        setState(() {
-          alunos = list;
-        });
+  void _getAllAluno() {
+    helper.getAll().then((list) {
+      setState(() {
+        alunos = list;
       });
-    }
+    });
+  }
 }

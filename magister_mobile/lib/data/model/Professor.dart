@@ -45,21 +45,23 @@ class Professores extends StatefulWidget {
   Professores({@required this.color});
 
   @override
-  _ProfessoresState createState() => _ProfessoresState();
+  _ProfessoresState createState() => _ProfessoresState(color: color);
 }
 
 class _ProfessoresState extends State<Professores> {
   HelperProfessor helper = HelperProfessor();
   List<Professor> professores = List();
+  Color color;
+  _ProfessoresState({@required this.color});
 
   @override
   void initState() {
     super.initState();
-    Professor p = new Professor();
-    p.id = 1234;
-    p.matricula = 4321;
-    p.nome = "Joao";
-    helper.save(p);
+    // Professor p = new Professor();
+    // p.id = 1234;
+    // p.matricula = 4321;
+    // p.nome = "Joao";
+    // helper.save(p);
     _getAllProfessores();
   }
 
@@ -137,7 +139,7 @@ class _ProfessoresState extends State<Professores> {
         context,
         MaterialPageRoute(
             builder: (context) => ProfessorPage(
-                  professor: professor,
+                  professor: professor, color: color,
                 )));
     if (recProfessor != null) {
       if (professor != null) {

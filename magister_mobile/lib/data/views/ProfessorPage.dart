@@ -3,11 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:magister_mobile/data/model/Professor.dart';
 
 class ProfessorPage extends StatefulWidget {
+  Color color;
   final Professor professor;
-  ProfessorPage({this.professor}); //Entre chaves significa que é opcional
+  ProfessorPage({this.professor, this.color}); //Entre chaves significa que é opcional
 
   @override
-  _ProfessorPageState createState() => _ProfessorPageState(color: null);
+  _ProfessorPageState createState() => _ProfessorPageState(color: color);
 }
 
 class _ProfessorPageState extends State<ProfessorPage> {
@@ -42,8 +43,11 @@ class _ProfessorPageState extends State<ProfessorPage> {
         child: Scaffold(
             appBar: AppBar(
               backgroundColor: color,
-              title: Text(_editedProfessor.nome ??
-                  "Novo Professor"), // O ?? significa se for null 'else'
+              title: Text(_editedProfessor.nome ??  // O ?? significa se for null 'else'
+                  "Novo Professor", style: TextStyle(
+                    fontFamily: "Kanit", fontSize: 25.0
+                    ),
+                  ), 
               centerTitle: true,
             ),
             floatingActionButton: FloatingActionButton(

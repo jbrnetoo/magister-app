@@ -1,42 +1,44 @@
 import 'dart:io';
-import 'package:flutter/material.dart';
-import 'package:magister_mobile/data/model/Aluno.dart';
 
-class AlunoPage extends StatefulWidget {
+import 'package:flutter/material.dart';
+import 'package:magister_mobile/data/model/Curso.dart';
+
+class CursoPage extends StatefulWidget {
   Color color;
-  final Aluno aluno;
-  AlunoPage({this.aluno, this.color}); //Entre chaves significa que é opcional
+  final Curso curso;
+  CursoPage({this.curso, this.color}); //Entre chaves significa que é opcional
 
   @override
-  _AlunoPageState createState() => _AlunoPageState(color: color);
+  _CursoPageState createState() => _CursoPageState(color: color);
 }
 
-class _AlunoPageState extends State<AlunoPage> {
+class _CursoPageState extends State<CursoPage> {
+
   GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
   final _nomeFocus = FocusNode();
-  final _nomeAlunoController = TextEditingController();
-  final _idAlunoController = TextEditingController();
-  final _dataNascimentoController = TextEditingController();
-  final _idCurso = TextEditingController();
-  final _mgpAlunoController = TextEditingController();
+  TextEditingController _idCursoController = TextEditingController();
+  TextEditingController _nomeCursoController = TextEditingController();
+  TextEditingController _idCoordenadorController = TextEditingController();
+  TextEditingController _totalCreditosController = TextEditingController();
 
   Color color;
+  _CursoPageState({@required this.color});
   bool _userEdited = false;
-  Aluno _editedAluno;
-  _AlunoPageState({@required this.color});
+  Curso _editedCurso;
+
 
   @override
   void initState() {
     super.initState();
 
-    if (widget.aluno == null) {
-      _editedAluno = new Aluno();
+    if (widget.curso == null) {
+      _editedCurso = new Curso();
     } else {
-      _editedAluno = Aluno.fromMap(widget.aluno.toMap());
-      _nomeAlunoController.text = _editedAluno.nomeAluno;
-      _idAlunoController.text = _editedAluno.idAluno.toString();
-      _dataNascimentoController.text = _editedAluno.datNasc.toString();
-      _idCurso.text = _editedAluno.idCurso.toString();
+      _editedCurso = Curso.fromMap(widget.curso.toMap());
+      _nomeCursoController.text = _editedCurso.nome;
+      _idCursoController.text = _editedCurso.idCurso.toString();
+      _totalCreditosController.text = _editedCurso.totalCreditos.toString();
+      _idCoordenadorController.text = _editedCurso.idCoordenador.toString();
     }
   }
 
@@ -47,19 +49,19 @@ class _AlunoPageState extends State<AlunoPage> {
         child: Scaffold(
             appBar: AppBar(
               backgroundColor: color,
-              title: Text(_editedAluno.nomeAluno ??  // O ?? significa se for null 'else'
-                  "Novo Aluno", style: TextStyle(
+              title: Text(_editedCurso.nome ??  // O ?? significa se for null 'else'
+                  "Novo Curso",  style: TextStyle(
                     fontFamily: "Kanit", fontSize: 25.0
                     ),
-                  ),
+                  ), 
               centerTitle: true,
             ),
             floatingActionButton: FloatingActionButton(
               onPressed: () {
                 if (_formKey.currentState.validate()) {
-                  if (_editedAluno.nomeAluno != null &&
-                      _editedAluno.nomeAluno.isNotEmpty) {
-                    Navigator.pop(context, _editedAluno);
+                  if (_editedCurso.nome != null &&
+                      _editedCurso.nome.isNotEmpty) {
+                    Navigator.pop(context, _editedCurso);
                   } else {
                     FocusScope.of(context).requestFocus(_nomeFocus);
                   }
@@ -84,75 +86,33 @@ class _AlunoPageState extends State<AlunoPage> {
                           decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               image: DecorationImage(
-                                  image: _editedAluno.img != null
-                                      ? FileImage(File(_editedAluno.img))
+                                  image: _editedCurso.img != null
+                                      ? FileImage(File(_editedCurso.img))
                                       : AssetImage("images/person.png"))),
                         ),
                       )),
                       TextFormField(
                           keyboardType: TextInputType.text,
                           decoration: InputDecoration(
-                              labelText: "Nome do Aluno",
+                              labelText: "Nome do Curso",
                               labelStyle:
                                   TextStyle(color: color, fontSize: 20.0)),
                           textAlign: TextAlign.left,
                           style: TextStyle(color: Colors.black, fontSize: 20.0),
-                          controller: _nomeAlunoController,
+                          controller: _nomeCursoController,
                           validator: (value) {
                             if (value.isEmpty) {
-                              return "Insira o nome do aluno!";
+                              return "Insira o nome do curso!";
                             }
                             return null;
                           },
                           onChanged: (text) {
                             _userEdited = true;
                             setState(() {
-                              _editedAluno.nomeAluno = text;
+                              _editedCurso.nome = text;
                             });
                           }),
                       TextFormField(
-                        keyboardType: TextInputType.number,
-                        decoration: InputDecoration(
-                            labelText: "ID do Aluno",
-                            labelStyle:
-                                TextStyle(color: color, fontSize: 20.0)),
-                        textAlign: TextAlign.left,
-                        style: TextStyle(color: Colors.black, fontSize: 20.0),
-                        controller: _idAlunoController,
-                        validator: (value) {
-                          if (value.isEmpty) {
-                            return "Insira o ID do aluno!";
-                          } else if (int.parse(value) < 0) {
-                            return "ID inválido!";
-                          }
-                          return null;
-                        },
-                        onChanged: (text) {
-                          _userEdited = true;
-                          _editedAluno.idAluno = int.parse(text);
-                        },
-                      ),
-                      TextFormField(
-                        keyboardType: TextInputType.datetime,
-                        decoration: InputDecoration(
-                            labelText: "Data de Nascimento do Aluno",
-                            labelStyle:
-                                TextStyle(color: color, fontSize: 20.0)),
-                        textAlign: TextAlign.left,
-                        style: TextStyle(color: Colors.black, fontSize: 20.0),
-                        controller: _dataNascimentoController,
-                        validator: (value) {
-                          if (value.isEmpty) {
-                            return "Insira a data de nascimento do aluno!";
-                          }
-                            return null;
-                        },
-                        onChanged: (text) {
-                          _userEdited = true;
-                          _editedAluno.datNasc = text;
-                        },
-                      ),
-                       TextFormField(
                         keyboardType: TextInputType.number,
                         decoration: InputDecoration(
                             labelText: "ID do Curso",
@@ -160,7 +120,7 @@ class _AlunoPageState extends State<AlunoPage> {
                                 TextStyle(color: color, fontSize: 20.0)),
                         textAlign: TextAlign.left,
                         style: TextStyle(color: Colors.black, fontSize: 20.0),
-                        controller: _idCurso,
+                        controller: _idCursoController,
                         validator: (value) {
                           if (value.isEmpty) {
                             return "Insira o ID do curso!";
@@ -171,29 +131,51 @@ class _AlunoPageState extends State<AlunoPage> {
                         },
                         onChanged: (text) {
                           _userEdited = true;
-                          _editedAluno.idCurso = int.parse(text);
+                          _editedCurso.idCurso = int.parse(text);
                         },
                       ),
-                       TextFormField(
+                      TextFormField(
                         keyboardType: TextInputType.number,
                         decoration: InputDecoration(
-                            labelText: "MGP do Aluno",
+                            labelText: "Total de Creditos do Curso",
                             labelStyle:
                                 TextStyle(color: color, fontSize: 20.0)),
                         textAlign: TextAlign.left,
                         style: TextStyle(color: Colors.black, fontSize: 20.0),
-                        controller: _mgpAlunoController,
+                        controller: _totalCreditosController,
                         validator: (value) {
                           if (value.isEmpty) {
-                            return "Insira a MGP do aluno!";
+                            return "Insira o total de creditos!";
                           } else if (double.parse(value) < 0.0) {
-                            return "MGP inválido!";
+                            return "Inserção inválida!";
                           }
                           return null;
                         },
                         onChanged: (text) {
                           _userEdited = true;
-                          _editedAluno.mgp = double.parse(text);
+                          _editedCurso.totalCreditos = double.parse(text);
+                        },
+                      ),
+                       TextFormField(
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                            labelText: "ID do Coordenador do Curso",
+                            labelStyle:
+                                TextStyle(color: color, fontSize: 20.0)),
+                        textAlign: TextAlign.left,
+                        style: TextStyle(color: Colors.black, fontSize: 20.0),
+                        controller: _idCoordenadorController,
+                        validator: (value) {
+                          if (value.isEmpty) {
+                            return "Insira o ID do coordenador do curso!";
+                          } else if (int.parse(value) < 0) {
+                            return "ID inválido!";
+                          }
+                          return null;
+                        },
+                        onChanged: (text) {
+                          _userEdited = true;
+                          _editedCurso.idCoordenador = int.parse(text);
                         },
                       ),
                     ],

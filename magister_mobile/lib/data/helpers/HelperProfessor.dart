@@ -4,11 +4,14 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
 class HelperProfessor extends HelperBase<Professor> {
-  Database _db;
+
   static final String professorTable = "tb_professor";
   static final String idColumn = "id";
   static final String nomeColumn = "nome";
   static final String matriculaColumn = "matricula";
+  
+  Database _db;
+  
   static final HelperProfessor _instance = HelperProfessor.getInstance();
 
   factory HelperProfessor() => _instance;
@@ -31,14 +34,14 @@ class HelperProfessor extends HelperBase<Professor> {
     return await openDatabase(path, version: 1,
         onCreate: (Database db, int newerVersion) async {
       await db.execute(
-          "CREATE TABLE $professorTable($idColumn INTEGER PRIMARY KEY, $nomeColumn TEXT, $matriculaColumn INTEGER)");
+          "CREATE TABLE IF NOT EXIST $professorTable($idColumn INTEGER PRIMARY KEY, $nomeColumn TEXT, $matriculaColumn INTEGER)");
     });
   }
 
 @override
   Future<Professor> save(Professor professor) async {
-    Database dbContact = await db;
-    professor.id = await dbContact.insert(professorTable, professor.toMap());
+    Database database = await db;
+    professor.id = await database.insert(professorTable, professor.toMap());
     return professor;
   }
 
