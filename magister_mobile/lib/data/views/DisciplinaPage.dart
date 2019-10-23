@@ -1,43 +1,45 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:magister_mobile/data/model/Curso.dart';
+import 'package:magister_mobile/data/model/Disciplina.dart';
 
-class CursoPage extends StatefulWidget {
+class DisciplinaPage extends StatefulWidget {
   Color color;
-  final Curso curso;
-  CursoPage({this.curso, this.color}); //Entre chaves significa que é opcional
+  final Disciplina disciplina;
+  DisciplinaPage({this.disciplina, this.color});
 
   @override
-  _CursoPageState createState() => _CursoPageState(color: color);
+  _DisciplinaPageState createState() => _DisciplinaPageState(color: color);
 }
 
-class _CursoPageState extends State<CursoPage> {
-
+class _DisciplinaPageState extends State<DisciplinaPage> {
   GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
   final _nomeFocus = FocusNode();
-  TextEditingController _idCursoController = TextEditingController();
-  TextEditingController _nomeCursoController = TextEditingController();
-  TextEditingController _idCoordenadorController = TextEditingController();
-  TextEditingController _totalCreditosController = TextEditingController();
+  TextEditingController _codigoDisciplinaController = TextEditingController();
+  TextEditingController _nomeDisciplinaController = TextEditingController();
+  TextEditingController _creditoController = TextEditingController();
+  TextEditingController _tipoDiscController = TextEditingController();
+  TextEditingController _horasObrigatoriasController = TextEditingController();
+  TextEditingController _limitesFaltasController = TextEditingController();
 
   Color color;
-  _CursoPageState({@required this.color});
+  _DisciplinaPageState({@required this.color});
   bool _userEdited = false;
-  Curso _editedCurso;
-
+  Disciplina _editedDisciplina;
 
   @override
   void initState() {
     super.initState();
 
-    if (widget.curso == null) {
-      _editedCurso = new Curso();
+    if (widget.disciplina == null) {
+      _editedDisciplina = new Disciplina();
     } else {
-      _editedCurso = Curso.fromMap(widget.curso.toMap());
-      _nomeCursoController.text = _editedCurso.nome;
-      _idCursoController.text = _editedCurso.idCurso.toString();
-      _totalCreditosController.text = _editedCurso.totalCreditos.toString();
-      _idCoordenadorController.text = _editedCurso.idCoordenador.toString();
+      _editedDisciplina = Disciplina.fromMap(widget.disciplina.toMap());
+      _nomeDisciplinaController.text = _editedDisciplina.nomeDisc;
+      _codigoDisciplinaController.text = _editedDisciplina.idDisc.toString();
+      _creditoController.text = _editedDisciplina.creditos.toString();
+      _tipoDiscController.text = _editedDisciplina.tipoDisc.toString();
+      _horasObrigatoriasController.text =
+          _editedDisciplina.horasObrig.toString();
     }
   }
 
@@ -48,19 +50,20 @@ class _CursoPageState extends State<CursoPage> {
         child: Scaffold(
             appBar: AppBar(
               backgroundColor: color,
-              title: Text(_editedCurso.nome ??  // O ?? significa se for null 'else'
-                  "Novo Curso",  style: TextStyle(
-                    fontFamily: "Kanit", fontSize: 25.0
-                    ),
-                  ), 
+              title: Text(
+                _editedDisciplina
+                        .nomeDisc ?? // O ?? significa se for null 'else'
+                    "Nova Disciplina",
+                style: TextStyle(fontFamily: "Kanit", fontSize: 25.0),
+              ),
               centerTitle: true,
             ),
             floatingActionButton: FloatingActionButton(
               onPressed: () {
                 if (_formKey.currentState.validate()) {
-                  if (_editedCurso.nome != null &&
-                      _editedCurso.nome.isNotEmpty) {
-                    Navigator.pop(context, _editedCurso);
+                  if (_editedDisciplina.nomeDisc != null &&
+                      _editedDisciplina.nomeDisc.isNotEmpty) {
+                    Navigator.pop(context, _editedDisciplina);
                   } else {
                     FocusScope.of(context).requestFocus(_nomeFocus);
                   }
@@ -85,63 +88,63 @@ class _CursoPageState extends State<CursoPage> {
                           decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               image: DecorationImage(
-                                  image: _editedCurso.img != null
-                                      ? FileImage(File(_editedCurso.img))
+                                  image: _editedDisciplina.img != null
+                                      ? FileImage(File(_editedDisciplina.img))
                                       : AssetImage("images/person.png"))),
                         ),
                       )),
                       TextFormField(
                           keyboardType: TextInputType.text,
                           decoration: InputDecoration(
-                              labelText: "Nome do Curso",
+                              labelText: "Nome da Disciplina",
                               labelStyle:
                                   TextStyle(color: color, fontSize: 20.0)),
                           textAlign: TextAlign.left,
                           style: TextStyle(color: Colors.black, fontSize: 20.0),
-                          controller: _nomeCursoController,
+                          controller: _nomeDisciplinaController,
                           validator: (value) {
                             if (value.isEmpty) {
-                              return "Insira o nome do curso!";
+                              return "Insira o nome da disciplina!";
                             }
                             return null;
                           },
                           onChanged: (text) {
                             _userEdited = true;
                             setState(() {
-                              _editedCurso.nome = text;
+                              _editedDisciplina.nomeDisc = text;
                             });
                           }),
                       TextFormField(
                         keyboardType: TextInputType.number,
                         decoration: InputDecoration(
-                            labelText: "ID do Curso",
+                            labelText: "Código da Disciplina",
                             labelStyle:
                                 TextStyle(color: color, fontSize: 20.0)),
                         textAlign: TextAlign.left,
                         style: TextStyle(color: Colors.black, fontSize: 20.0),
-                        controller: _idCursoController,
+                        controller: _codigoDisciplinaController,
                         validator: (value) {
                           if (value.isEmpty) {
-                            return "Insira o ID do curso!";
+                            return "Insira o código da disciplina!";
                           } else if (int.parse(value) < 0) {
-                            return "ID inválido!";
+                            return "Código inválido!";
                           }
                           return null;
                         },
                         onChanged: (text) {
                           _userEdited = true;
-                          _editedCurso.idCurso = int.parse(text);
+                          _editedDisciplina.idCurso = int.parse(text);
                         },
                       ),
                       TextFormField(
                         keyboardType: TextInputType.number,
                         decoration: InputDecoration(
-                            labelText: "Total de Creditos do Curso",
+                            labelText: "Total de Creditos da Disciplina",
                             labelStyle:
                                 TextStyle(color: color, fontSize: 20.0)),
                         textAlign: TextAlign.left,
                         style: TextStyle(color: Colors.black, fontSize: 20.0),
-                        controller: _totalCreditosController,
+                        controller: _creditoController,
                         validator: (value) {
                           if (value.isEmpty) {
                             return "Insira o total de creditos!";
@@ -152,29 +155,49 @@ class _CursoPageState extends State<CursoPage> {
                         },
                         onChanged: (text) {
                           _userEdited = true;
-                          _editedCurso.totalCreditos = int.parse(text);
+                          _editedDisciplina.creditos = int.parse(text);
                         },
                       ),
-                       TextFormField(
-                        keyboardType: TextInputType.number,
+                      TextFormField(
+                        keyboardType: TextInputType.text,
                         decoration: InputDecoration(
-                            labelText: "ID do Coordenador do Curso",
+                            labelText: "Tipo da Disciplina",
                             labelStyle:
                                 TextStyle(color: color, fontSize: 20.0)),
                         textAlign: TextAlign.left,
                         style: TextStyle(color: Colors.black, fontSize: 20.0),
-                        controller: _idCoordenadorController,
+                        controller: _tipoDiscController,
                         validator: (value) {
                           if (value.isEmpty) {
-                            return "Insira o ID do coordenador do curso!";
-                          } else if (int.parse(value) < 0) {
-                            return "ID inválido!";
+                            return "Insira o tipo da disciplina!";
                           }
                           return null;
                         },
                         onChanged: (text) {
                           _userEdited = true;
-                          _editedCurso.idCoordenador = int.parse(text);
+                          _editedDisciplina.tipoDisc = text;
+                        },
+                      ),
+                      TextFormField(
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                            labelText: "Horas Obrigatórias",
+                            labelStyle:
+                                TextStyle(color: color, fontSize: 20.0)),
+                        textAlign: TextAlign.left,
+                        style: TextStyle(color: Colors.black, fontSize: 20.0),
+                        controller: _horasObrigatoriasController,
+                        validator: (value) {
+                          if (value.isEmpty) {
+                            return "Insira a quantidade de horas!";
+                          } else if (int.parse(value) < 0.0) {
+                            return "Inserção inválida!";
+                          }
+                          return null;
+                        },
+                        onChanged: (text) {
+                          _userEdited = true;
+                          _editedDisciplina.horasObrig = int.parse(text);
                         },
                       ),
                     ],

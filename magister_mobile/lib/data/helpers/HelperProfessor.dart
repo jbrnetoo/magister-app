@@ -1,7 +1,6 @@
 import 'package:magister_mobile/data/helpers/HelperBase.dart';
 import 'package:magister_mobile/data/model/Professor.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:path/path.dart';
 
 class HelperProfessor extends HelperBase<Professor> {
 
@@ -10,33 +9,10 @@ class HelperProfessor extends HelperBase<Professor> {
   static final String nomeColumn = "nome";
   static final String matriculaColumn = "matricula";
   
-  Database _db;
-  
   static final HelperProfessor _instance = HelperProfessor.getInstance();
 
   factory HelperProfessor() => _instance;
-  HelperProfessor.getInstance();
-
-  Future<Database> get db async {
-    if (_db != null) {
-      return _db;
-    } else {
-      _db = await createTable();
-      return _db;
-    }
-  }
-
-  @override
-  Future<Database> createTable() async {
-    final databasesPath = await getDatabasesPath();
-    final path = join(databasesPath, HelperBase.dataBaseName);
-
-    return await openDatabase(path, version: 1,
-        onCreate: (Database db, int newerVersion) async {
-      await db.execute(
-          "CREATE TABLE IF NOT EXIST $professorTable($idColumn INTEGER PRIMARY KEY, $nomeColumn TEXT, $matriculaColumn INTEGER)");
-    });
-  }
+  HelperProfessor.getInstance();  
 
 @override
   Future<Professor> save(Professor professor) async {
@@ -88,6 +64,20 @@ class HelperProfessor extends HelperBase<Professor> {
     }
     return listProf;
   }
+
+  // Future<List> getAllProfFromCurso(int idCurso) async {
+  //   Database dbContact = await db;
+  //   List listMap = await dbContact.rawQuery("SELECT DISTINCT prof.${HelperProfessor.idColumn}, prof.${HelperProfessor.nomeColumn}, prof.${HelperProfessor.matriculaColumn} FROM $professorTable AS prof "
+  //                                           "INNER JOIN ${HelperTurma.turmaTable} AS turma ON turma.${HelperTurma.idProfColumn } = prof.${HelperProfessor.idColumn} "
+  //                                           "INNER JOIN ${HelperDisciplina.disciplinaTable} AS disc ON disc.${HelperDisciplina.idColumn} = turma.${HelperTurma.idDiscColumn} "
+  //                                           "INNER JOIN ${HelperCurso.cursoTable} AS curso ON curso.${HelperCurso.idColumn} = disc.${HelperDisciplina.idCursoColumn} "
+  //                                           "WHERE curso.${HelperCurso.idColumn} = $idCurso");                                 
+  //   List<Professor> listProf = List();
+  //   for (Map m in listMap) {
+  //     listProf.add(Professor.fromMap(m));
+  //   }
+  //   return listProf;
+  // }
 
 @override
   Future<int> getNumber() async {

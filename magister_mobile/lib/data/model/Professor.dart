@@ -62,7 +62,9 @@ class _ProfessoresState extends State<Professores> {
     // p.matricula = 4321;
     // p.nome = "Joao";
     // helper.save(p);
-    _getAllProfessores();
+    if(size() != 0){
+      _getAllProfessores();
+    }
   }
 
   @override
@@ -157,5 +159,10 @@ class _ProfessoresState extends State<Professores> {
         professores = list;
       });
     });
+  }
+
+   size() async {
+   int number = await helper.getNumber();
+   return number;
   }
 }

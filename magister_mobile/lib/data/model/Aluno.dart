@@ -43,7 +43,7 @@ class Aluno {
 
   @override
   String toString() {
-    return "Contact(id: $idAluno, nome: $nomeAluno, créditos: $totCreditos, dataNasc: $datNasc, mgp: $mgp, idCurso: $idCurso)";
+    return "Contact(id: $idAluno, nome: $nomeAluno, créditos: $totCreditos, dataNasc: $datNasc, mgp: $mgp)";
   }
 }
 
@@ -69,13 +69,9 @@ class _AlunosState extends State<Alunos> {
   @override
   void initState() {
     super.initState();
-    // Aluno a = new Aluno();
-    // a.idAluno = 2030;
-    // a.nomeAluno = "Leo";
-    // a.datNasc = "1996-12-19";
-    // a.mgp = 20.5;
-    // helper.save(a);
-    _getAllAluno();
+    if(size() != 0){
+      _getAllAluno();
+    }
   }
 
   @override
@@ -169,5 +165,10 @@ class _AlunosState extends State<Alunos> {
         alunos = list;
       });
     });
+  }
+
+   size() async {
+   int number = await helper.getNumber();
+   return number;
   }
 }

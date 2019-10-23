@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:magister_mobile/data/helpers/HelperCurso.dart';
 import 'package:magister_mobile/data/views/CursoPage.dart';
 import 'Professor.dart';
@@ -8,7 +7,7 @@ import 'package:flutter/material.dart';
 class Curso {
   int idCurso;
   String nome;
-  double totalCreditos;
+  int totalCreditos;
   int idCoordenador;
   Professor coordenador;
   String img;
@@ -41,9 +40,9 @@ class Curso {
   }
 }
 
-TextEditingController idCursoController = TextEditingController();
-TextEditingController nomeCursoController = TextEditingController();
-TextEditingController idCoordenadorController = TextEditingController();
+// TextEditingController idCursoController = TextEditingController();
+// TextEditingController nomeCursoController = TextEditingController();
+// TextEditingController idCoordenadorController = TextEditingController();
 
 class Cursos extends StatefulWidget {
   
@@ -63,13 +62,9 @@ class _CursosState extends State<Cursos> {
   @override
   void initState() {
     super.initState();
-    // Curso c = new Curso();
-    // c.idCurso = 8924;
-    // c.nome = "Flavio";
-    // c.totalCreditos = 44;
-    // c.idCoordenador = 1234;
-    // helper.save(c);
-    _getAllCurso();
+    if(size() != 0){
+       _getAllCurso();
+    }
   }
 
   @override
@@ -142,7 +137,7 @@ class _CursosState extends State<Cursos> {
 
   void _showCursoPage({Curso curso}) async {
     final recCurso = await Navigator.push(context,
-      MaterialPageRoute(builder: (context) => CursoPage(curso: curso,color: color,))
+      MaterialPageRoute(builder: (context) => CursoPage(curso: curso, color: color,))
       );
       if (recCurso != null) {
         if (curso != null) {
@@ -160,5 +155,10 @@ class _CursosState extends State<Cursos> {
         cursos = list;
       });
     });
+  }
+
+  size() async {
+   int number = await helper.getNumber();
+   return number;
   }
 }
